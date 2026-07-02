@@ -1,0 +1,36 @@
+---
+- name: Automatización de configuración inicial en servidores Ubuntu
+  hosts: servidores
+  become: yes # Para que ejecute las tareas como root
+  tasks:
+    - name: Actualizar los paquetes de APT del sistema operativo
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Crear el usuario "itla"
+      user:
+        name: itla
+        state: present
+        shell: /bin/bash
+
+    - name: Crear una carpeta llamada "app" en la raíz
+      file:
+        path: /app
+        state: directory
+        mode: '0755'
+
+    - name: Crear un archivo hola.txt en la carpeta "app"
+      copy:
+        content: "Hola desde la practica de Ansible de ITLA!\n"
+        dest: /app/hola.txt
+        owner: itla
+        group: itla
+        mode: '0644'
+
+    - name: Instalar las aplicaciones "cowsay" y "htop"
+      apt:
+        name:
+          - cowsay
+          - htop
+        state: present
